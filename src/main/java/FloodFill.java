@@ -1,6 +1,6 @@
 public class FloodFill {
     private int xStart, yStart, xTarget, yTarget;
-    int radiusToN = 0, radiusToE = 0, radiusToS = 0, radiusToW = 0;
+    int radius = 0;
     private final Grid grid;
     private final float[][] costs;
 
@@ -20,21 +20,36 @@ public class FloodFill {
         resetWeights();
         costs[yStart][xStart] = 0;
         while (!isFullyFilled()) {
-            incrementRadius();
-            for (int i=xStart-radiusToW; i<=xStart+radiusToE; i++){
-                for (int j=yStart-radiusToN; j<=yStart+radiusToS; j++) {
-                    if (costs[j][i] == -1)
-                        costs[j][i] = getMinCellCost(i, j);
-                }
-            }
+            String[] edges = {"NW", "NE", "SE", "SW"};
+            for (String edge : edges)
+                updateEdge(edge);
+            radius++;
         }
     }
 
-    private void incrementRadius() {
-        if (isInsideBounds(xStart - radiusToW - 1, yStart)) radiusToW++;
-        if (isInsideBounds(xStart + radiusToE + 1, yStart)) radiusToE++;
-        if (isInsideBounds(xStart, yStart - radiusToN - 1)) radiusToN++;
-        if (isInsideBounds(xStart, yStart + radiusToS + 1)) radiusToS++;
+    private void updateEdge(String edge) {
+        for (int i=0; i<radius; i++) {
+            int xCoordinate, yCoordinate;
+            switch (edge) {
+                case "NW":
+                    xCoordinate = xStart - radius + i;
+                    yCoordinate = yStart - i;
+                    break;
+                case "NE":
+                    xCoordinate = xStart + i;
+                    yCoordinate = yStart - radius + i;
+                    break;
+                case "SE":
+                    xCoordinate = xStart + radius - i;
+                    yCoordinate = yStart + i;
+                    break;
+                default: // SW
+                    xCoordinate = xStart - i;
+                    yCoordinate = xStart + radius - i;
+            }
+            if (isInsideBounds(xCoordinate, yCoordinate) && costs[yCoordinate][xCoordinate] == -1)
+                costs[yCoordinate][xCoordinate] = getMinCellCost(xCoordinate, yCoordinate);
+        }
     }
 
     private boolean isInsideBounds(int x, int y) {
@@ -46,8 +61,8 @@ public class FloodFill {
     }
 
     private boolean isFullyFilled() {
-        return isOutOfBounds(xStart - radiusToW - 1, yStart) && isOutOfBounds(xStart + radiusToE + 1, yStart) &&
-                isOutOfBounds(xStart, yStart - radiusToN - 1) && isOutOfBounds(xStart, yStart + radiusToS + 1);
+        return isOutOfBounds(xStart - radius/2, yStart) && isOutOfBounds(xStart + radius/2, yStart) &&
+                isOutOfBounds(xStart, yStart - radius/2) && isOutOfBounds(xStart, yStart + radius/2);
     }
 
     private void resetWeights() {
