@@ -1,3 +1,7 @@
+package botrouteplanner.floodfill;
+
+import botrouteplanner.model.Grid;
+import botrouteplanner.model.Point;
 import lombok.Setter;
 
 public class PointFloodFill extends FloodFill {

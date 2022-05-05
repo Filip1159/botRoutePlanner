@@ -1,3 +1,6 @@
+package botrouteplanner.model;
+
+import botrouteplanner.enumeration.CellType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

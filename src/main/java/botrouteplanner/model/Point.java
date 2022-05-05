@@ -1,10 +1,12 @@
+package botrouteplanner.model;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Point {
-    int x, y;
+    public int x, y;
 
     @Override
     public String toString() {

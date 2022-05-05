@@ -1,3 +1,8 @@
+package botrouteplanner.floodfill;
+
+import botrouteplanner.model.Grid;
+import botrouteplanner.model.Point;
+import botrouteplanner.model.Product;
 import lombok.Setter;
 
 import java.util.HashSet;

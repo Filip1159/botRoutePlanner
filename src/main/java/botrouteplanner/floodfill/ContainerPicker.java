@@ -1,3 +1,8 @@
+package botrouteplanner.floodfill;
+
+import botrouteplanner.enumeration.CellType;
+import botrouteplanner.model.Point;
+import botrouteplanner.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
