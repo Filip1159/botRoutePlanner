@@ -45,16 +45,11 @@ public class Grid {
 
     private static CellType charToCellType(char c) {
         switch (c) {
-            case 'H':
-                return CellType.H;
-            case 'B':
-                return CellType.B;
-            case 'S':
-                return CellType.S;
-            case 'O':
-                return CellType.O;
-            default:
-                throw new IllegalArgumentException("Illegal cellType code: " + c);
+            case 'H': return CellType.H;
+            case 'B': return CellType.B;
+            case 'S': return CellType.S;
+            case 'O': return CellType.O;
+            default: throw new IllegalArgumentException("Illegal cellType code: " + c);
         }
     }
 
@@ -89,36 +84,10 @@ public class Grid {
     }
 
     private boolean areNeighbors(Point p1, Point p2) {
-        return (Math.abs(p1.x - p2.x) == 0 && Math.abs(p1.y - p2.y) == 1) || (Math.abs(p1.x - p2.x) == 1 && Math.abs(p1.y - p2.y) == 0);
+        return (p1.x == p2.x && Math.abs(p1.y - p2.y) == 1) || (Math.abs(p1.x - p2.x) == 1 && p1.y == p2.y);
     }
 
     public boolean isAccessible(Point p) {
         return array[p.y][p.x] != CellType.O;
-    }
-
-    public void print() {
-        for (int i=0; i<height; i++) {
-            for (int j=0; j<width; j++) {
-                System.out.print(array[i][j]);
-            }
-            System.out.println();
-        }
-    }
-
-    public void printLocal(Point p) {
-        int startX = p.x - 2;
-        if (startX < 0) startX = 0;
-        int startY = p.y - 2;
-        if (startY < 0) startY = 0;
-        int endX = p.x + 3;
-        if (endX > width) endX = width;
-        int endY = p.y + 3;
-        if (endY > height) endY = height;
-        for (int i=startY; i<endY; i++) {
-            for (int j=startX; j<endX; j++) {
-                System.out.print(array[i][j]);
-            }
-            System.out.println();
-        }
     }
 }

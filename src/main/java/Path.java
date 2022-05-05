@@ -1,19 +1,22 @@
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.ArrayList;
 
+@ToString
 public class Path {
-    private final Grid grid;
     private final ArrayList<Point> steps;
+    @Getter
+    @Setter
     private float travelTime;
 
-    public Path(Grid grid) {
-        this.grid = grid;
+    public Path() {
         steps = new ArrayList<>();
         travelTime = 0;
     }
 
     public void addStep(Point p) {
-        if (steps.size() > 0)
-            travelTime += grid.getTransitionCost(p, steps.get(0));
         steps.add(0, p);
     }
 
@@ -23,6 +26,10 @@ public class Path {
 
     public int stepsCount() {
         return steps.size();
+    }
+
+    public int transitionsCount() {
+        return steps.size()-1;
     }
 
     public Point getTarget() {
