@@ -92,8 +92,8 @@ public class Grid {
         return (Math.abs(p1.x - p2.x) == 0 && Math.abs(p1.y - p2.y) == 1) || (Math.abs(p1.x - p2.x) == 1 && Math.abs(p1.y - p2.y) == 0);
     }
 
-    public boolean isOutOfService(Point p) {
-        return array[p.y][p.x] == CellType.O;
+    public boolean isAccessible(Point p) {
+        return array[p.y][p.x] != CellType.O;
     }
 
     public void print() {
@@ -108,7 +108,7 @@ public class Grid {
     public void printLocal(Point p) {
         int startX = p.x - 2;
         if (startX < 0) startX = 0;
-        int startY = p.y + 2;
+        int startY = p.y - 2;
         if (startY < 0) startY = 0;
         int endX = p.x + 3;
         if (endX > width) endX = width;

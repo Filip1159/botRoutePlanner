@@ -1,32 +1,31 @@
-import java.util.ArrayList;
+import lombok.Setter;
+
 import java.util.HashSet;
 
 public class FloodFill {
-    private final Grid grid;
-    private final Job job;
+    @Setter
+    private Grid grid;
+    @Setter
+    private Point start, target;
+    @Setter
+    private String productName;
     private final float[][] costs;
     private float timer = 0;
-    private final HashSet<Point> floodedPoints;
-    private final HashSet<Point> newFloodedPoints;
-    private final HashSet<Point> pointsToRemove;
+    private final HashSet<Point> floodedPoints, newFloodedPoints, pointsToRemove;
     private Point foundProductPoint;
     private final HashSet<ContainerPicker> pickers;
 
-    public FloodFill(Grid grid, Job job) {
+    public FloodFill(Grid grid) {
         this.grid = grid;
-        this.job = job;
+        costs = new float[grid.getHeight()][grid.getWidth()];
         floodedPoints = new HashSet<>();
         newFloodedPoints = new HashSet<>();
         pointsToRemove = new HashSet<>();
         pickers = new HashSet<>();
-        costs = new float[grid.getHeight()][grid.getWidth()];
     }
 
     public void fill() {
-        resetWeights();
-        costs[job.getStart().y][job.getStart().x] = 0;
-        floodedPoints.add(job.getStart());
-        timer = 0;
+        setUp();
         while (!checkPickingFinishedAndSavePickedProduct()) {
             timer += 0.5;
             tickContainerPickers();
@@ -34,9 +33,32 @@ public class FloodFill {
                 for (Point p : floodedPoints)
                     tryToFloodNeighbors(p);
                 floodedPoints.removeAll(pointsToRemove);
+                pointsToRemove.clear();
                 floodedPoints.addAll(newFloodedPoints);
+                newFloodedPoints.clear();
             }
         }
+    }
+
+    public void fillToTarget() {
+        setUp();
+        while (!isTargetReached()) {
+            timer += 0.5;
+            for (Point p : floodedPoints)
+                tryToFloodNeighbors(p);
+            floodedPoints.removeAll(pointsToRemove);
+            pointsToRemove.clear();
+            floodedPoints.addAll(newFloodedPoints);
+            newFloodedPoints.clear();
+            System.out.println(floodedPoints);
+        }
+    }
+
+    private boolean isTargetReached() {
+        foundProductPoint = target;
+        for (Point p : floodedPoints)
+            if (p.equals(target)) return true;
+        return false;
     }
 
     private void tryToFloodNeighbors(Point p) {
@@ -53,13 +75,13 @@ public class FloodFill {
     }
 
     private boolean shouldBeFlooded(Point flooder, Point candidate) {
-        return areEqual(costs[flooder.y][flooder.x] + grid.getTransitionCost(flooder, candidate), timer);
+        return costs[flooder.y][flooder.x] + grid.getTransitionCost(flooder, candidate) == timer;
     }
 
     private void floodCell(Point floodedPoint) {
         costs[floodedPoint.y][floodedPoint.x] = timer;
         Product product;
-        if ((product = grid.getProductOrNull(job.getProductName(), floodedPoint)) != null) {
+        if ((product = grid.getProductOrNull(productName, floodedPoint)) != null) {
             pickers.add(new ContainerPicker(product, grid.getCellType(product.getLocation())));
         }
         newFloodedPoints.add(floodedPoint);
@@ -80,17 +102,19 @@ public class FloodFill {
         return false;
     }
 
-    public ArrayList<Point> preparePath() {
+    public Path preparePath() {
         Point currentStep = foundProductPoint;
-        ArrayList<Point> path = new ArrayList<>();
-        path.add(currentStep);
-        while (!currentStep.equals(job.getStart())) {
+        Path path = new Path(grid);
+        path.addStep(currentStep);
+        while (!currentStep.equals(start)) {
+            System.out.println(currentStep);
+            printLocal(currentStep);
             Point[] neighbors = getNeighbors(currentStep);
             for (Point neighbor : neighbors) {
-                if (!isOutOfBounds(neighbor) && !grid.isOutOfService(neighbor)) {
+                if (!isOutOfBounds(neighbor) && grid.isAccessible(neighbor)) {
                     float transitionCost = grid.getTransitionCost(currentStep, neighbor);
-                    if (areEqual(costs[neighbor.y][neighbor.x] + transitionCost, costs[currentStep.y][currentStep.x])) {
-                        path.add(neighbor);
+                    if (costs[neighbor.y][neighbor.x] + transitionCost == costs[currentStep.y][currentStep.x]) {
+                        path.addStep(neighbor);
                         currentStep = neighbor;
                         break;
                     }
@@ -100,8 +124,25 @@ public class FloodFill {
         return path;
     }
 
+    public void printLocal(Point p) {
+        int startX = p.x - 2;
+        if (startX < 0) startX = 0;
+        int startY = p.y - 2;
+        if (startY < 0) startY = 0;
+        int endX = p.x + 3;
+        if (endX > grid.getWidth()) endX = grid.getWidth();
+        int endY = p.y + 3;
+        if (endY > grid.getHeight()) endY = grid.getHeight();
+        for (int i=startY; i<endY; i++) {
+            for (int j=startX; j<endX; j++) {
+                System.out.print(costs[i][j] + "  ");
+            }
+            System.out.println();
+        }
+    }
+
     private boolean isFloodable(Point p) {
-        return !grid.isOutOfService(p) && costs[p.y][p.x] == -1;
+        return grid.isAccessible(p) && costs[p.y][p.x] == -1;
     }
 
     private boolean isOutOfBounds(int x, int y) {
@@ -124,12 +165,14 @@ public class FloodFill {
         return floodedPoints.isEmpty();
     }
 
-    private void resetWeights() {
-        for (int i=0; i<grid.getHeight(); i++) {
-            for (int j=0; j<grid.getWidth(); j++) {
+    private void setUp() {
+        for (int i=0; i<grid.getHeight(); i++)
+            for (int j=0; j<grid.getWidth(); j++)
                 costs[i][j] = -1;
-            }
-        }
+        floodedPoints.clear();
+        costs[start.y][start.x] = 0;
+        floodedPoints.add(start);
+        timer = 0;
     }
 
     public void printCosts() {
@@ -142,22 +185,9 @@ public class FloodFill {
     }
 
     private Point[] getNeighbors(Point p) {
-        return new Point[] {getNeighborCoordinates(p, Direction.N),
-                getNeighborCoordinates(p, Direction.E),
-                getNeighborCoordinates(p, Direction.S),
-                getNeighborCoordinates(p, Direction.W)};
-    }
-
-    private Point getNeighborCoordinates(Point p, Direction direction) {
-        switch (direction) {
-            case N: return new Point(p.x, p.y-1);
-            case E: return new Point(p.x+1, p.y);
-            case S: return new Point(p.x, p.y+1);
-            default: return new Point(p.x-1, p.y);
-        }
-    }
-
-    private boolean areEqual(float f1, float f2) {
-        return Math.abs(f1 - f2) < 0.1;
+        return new Point[] {new Point(p.x, p.y-1),
+                new Point(p.x+1, p.y),
+                new Point(p.x, p.y+1),
+                new Point(p.x-1, p.y)};
     }
 }
