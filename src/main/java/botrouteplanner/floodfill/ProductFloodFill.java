@@ -42,7 +42,17 @@ public class ProductFloodFill extends FloodFill {
     @Override
     protected void floodCell(Point floodedPoint) {
         super.floodCell(floodedPoint);
-        Optional<Product> optionalProduct = grid.getProductIfPresent(productName, floodedPoint);
+        checkAndFetchProduct(floodedPoint);
+    }
+
+    @Override
+    protected void reset() {
+        super.reset();
+        checkAndFetchProduct(start);
+    }
+
+    private void checkAndFetchProduct(Point p) {
+        Optional<Product> optionalProduct = grid.getProductIfPresent(productName, p);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
             pickers.add(new ContainerPicker(product, grid.getCellType(product.getLocation())));

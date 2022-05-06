@@ -14,19 +14,33 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointFloodFillTest {
-    private Grid smallGrid, bigGrid;
+    private Grid smallGrid, bigGrid, singlePointGrid;
     private Job smallJob, bigJob;
 
     @BeforeEach
     void setup() throws IOException {
-        final String SMALL_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/grid-1.txt";
-        final String SMALL_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/job-1.txt";
-        final String BIG_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/grid-2.txt";
-        final String BIG_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/job-2.txt";
+        final String SINGLE_POINT_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/single-point-grid.txt";
+        final String SMALL_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-1.txt";
+        final String SMALL_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/job-1.txt";
+        final String BIG_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-2.txt";
+        final String BIG_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/job-2.txt";
         smallGrid = GridLoader.loadFromFile(SMALL_GRID_PATH);
         bigGrid = GridLoader.loadFromFile(BIG_GRID_PATH);
         smallJob = Job.loadFromFile(SMALL_JOB_PATH);
         bigJob = Job.loadFromFile(BIG_JOB_PATH);
+        singlePointGrid = GridLoader.loadFromFile(SINGLE_POINT_GRID_PATH);
+    }
+
+    @Test
+    void shouldTestSinglePointGrid() {
+        PointFloodFill floodFill = new PointFloodFill(singlePointGrid);
+        floodFill.setStart(new Point(0, 0));
+        floodFill.setTarget(new Point(0, 0));
+        Path path = floodFill.preparePath();
+        assertIterableEquals(List.of(new Point(0, 0)), path);
+        assertEquals(0, path.getTransitionsCount());
+        assertEquals(1, path.stepsCount());
+        assertEquals(0, path.getTravelTime());
     }
 
     @Test

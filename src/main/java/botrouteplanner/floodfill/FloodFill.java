@@ -62,7 +62,7 @@ public abstract class FloodFill {
         throw new IllegalStateException("Internal error: cannot find flood source!");
     }
 
-    private void reset() {
+    protected void reset() {
         for (int i=0; i<grid.getHeight(); i++)
             for (int j=0; j<grid.getWidth(); j++)
                 travelTimes[i][j] = -1;

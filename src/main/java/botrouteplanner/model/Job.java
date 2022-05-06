@@ -25,6 +25,7 @@ public class Job {
         items = splitLine(reader.readLine());
         Point station = new Point(items[0], items[1]);
         String productName = reader.readLine();
+        reader.close();
         return new Job(start, station, productName);
     }
 }

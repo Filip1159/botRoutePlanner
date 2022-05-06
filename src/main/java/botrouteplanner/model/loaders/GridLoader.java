@@ -16,7 +16,9 @@ public class GridLoader {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));
         Grid grid = loadHeader(reader);
         loadGrid(grid, reader);
-        return loadProducts(grid, reader);
+        loadProducts(grid, reader);
+        reader.close();
+        return grid;
     }
 
     private static Grid loadHeader(BufferedReader reader) throws IOException {
@@ -32,7 +34,7 @@ public class GridLoader {
     private static void loadGrid(Grid grid, BufferedReader reader) throws IOException {
         for (int i=0; i<grid.getHeight(); i++) {
             String line = reader.readLine();
-            if (line.length() != grid.getHeight())
+            if (line.length() != grid.getWidth())
                 throw new IllegalArgumentException("Error reading line containing grid data no. " + (i+1) + " length is " + line.length() + " but it has to be " + grid.getWidth());
             for (int j=0; j<grid.getWidth(); j++)
                 grid.setCell(new Point(j, i), line.charAt(j));
