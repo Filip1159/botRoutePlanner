@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductFloodFillTest {
     private Grid smallGrid, bigGrid;
@@ -27,6 +26,18 @@ class ProductFloodFillTest {
         bigGrid = Grid.loadFromFile(BIG_GRID_PATH);
         smallJob = Job.loadFromFile(SMALL_JOB_PATH);
         bigJob = Job.loadFromFile(BIG_JOB_PATH);
+    }
+
+    @Test
+    void shouldThrowOnProductsOnInaccessibleCells() {
+        ProductFloodFill productFloodFill = new ProductFloodFill(bigGrid);
+        assertThrows(IllegalArgumentException.class, () -> productFloodFill.setProductName("10"));
+        assertThrows(IllegalArgumentException.class, () -> productFloodFill.setProductName("67"));
+        assertThrows(IllegalArgumentException.class, () -> productFloodFill.setProductName("158"));
+        assertThrows(IllegalArgumentException.class, () -> productFloodFill.setProductName("198"));
+        assertThrows(IllegalArgumentException.class, () -> productFloodFill.setProductName(""));
+        assertThrows(IllegalArgumentException.class, () -> productFloodFill.setProductName("ABCD"));
+
     }
 
     @Test

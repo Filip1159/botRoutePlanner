@@ -29,6 +29,17 @@ class PointFloodFillTest {
     }
 
     @Test
+    void shouldThrowWhenPointsNotAccessible() {
+        PointFloodFill floodFill = new PointFloodFill(bigGrid);
+        assertThrows(IllegalArgumentException.class, () -> floodFill.setStart(new Point(0, 2)));
+        assertThrows(IllegalArgumentException.class, () -> floodFill.setStart(new Point(-1, 20)));
+        assertThrows(IllegalArgumentException.class, () -> floodFill.setStart(new Point(0, -12)));
+        assertThrows(IllegalArgumentException.class, () -> floodFill.setTarget(new Point(3, 0)));
+        assertThrows(IllegalArgumentException.class, () -> floodFill.setTarget(new Point(0, -2)));
+        assertThrows(IllegalArgumentException.class, () -> floodFill.setTarget(new Point(-10, 2)));
+    }
+
+    @Test
     void shouldFindPathToPointBig() {
         List<Point> expectedSteps = List.of(new Point(6, 39),
                 new Point(5, 39),

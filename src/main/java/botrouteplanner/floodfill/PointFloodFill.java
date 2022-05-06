@@ -2,10 +2,8 @@ package botrouteplanner.floodfill;
 
 import botrouteplanner.model.Grid;
 import botrouteplanner.model.Point;
-import lombok.Setter;
 
 public class PointFloodFill extends FloodFill {
-    @Setter
     private Point target;
 
     public PointFloodFill(Grid grid) {
@@ -22,5 +20,10 @@ public class PointFloodFill extends FloodFill {
     @Override
     protected Point getDestination() {
         return target;
+    }
+
+    public void setTarget(Point target) {
+        if (!grid.isAccessible(target)) throw new IllegalArgumentException(target + " is not accessible!");
+        this.target = target;
     }
 }

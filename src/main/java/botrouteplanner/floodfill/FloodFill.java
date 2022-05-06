@@ -10,7 +10,6 @@ import java.util.HashSet;
 public abstract class FloodFill {
     @Setter
     protected Grid grid;
-    @Setter
     protected Point start;
     private final float[][] travelTimes;
     private float timer = 0;
@@ -54,7 +53,7 @@ public abstract class FloodFill {
     private Point getFloodSource(Point floodedPoint) {
         Point[] neighbors = floodedPoint.getNeighbors();
         for (Point neighbor : neighbors) {
-            if (isInsideBounds(neighbor) && grid.isAccessible(neighbor)) {
+            if (grid.isAccessible(neighbor)) {
                 float transitionCost = grid.getTransitionCost(floodedPoint, neighbor);
                 if (getTravelTime(neighbor) + transitionCost == getTravelTime(floodedPoint))
                     return neighbor;
@@ -76,7 +75,7 @@ public abstract class FloodFill {
     private void tryToFloodNeighbors(Point p) {
         boolean hasFloodableNeighbors = false;
         for (Point neighbor : p.getNeighbors()) {
-            if (isInsideBounds(neighbor) && isFloodable(neighbor)) {
+            if (isFloodable(neighbor)) {
                 hasFloodableNeighbors = true;
                 if (shouldBeFlooded(p, neighbor))
                     floodCell(neighbor);
@@ -95,6 +94,8 @@ public abstract class FloodFill {
     }
 
     protected void floodCell(Point floodedPoint) {
+        if (!grid.isAccessible(floodedPoint))
+            throw new IllegalArgumentException(floodedPoint + " is not accessible!");
         travelTimes[floodedPoint.y][floodedPoint.x] = timer;
         newFloodedPoints.add(floodedPoint);
     }
@@ -104,19 +105,19 @@ public abstract class FloodFill {
     }
 
     private float getTravelTime(Point p) {
+        if (!grid.isAccessible(p))
+            throw new IllegalArgumentException(p + " is not accessible!");
         return travelTimes[p.y][p.x];
-    }
-
-    private boolean isInsideBounds(Point p) {
-        return isInsideBounds(p.x, p.y);
-    }
-
-    private boolean isInsideBounds(int x, int y) {
-        return x >= 0 && x < grid.getWidth() && y >= 0 && y < grid.getHeight();
     }
 
     private boolean isFullyFilled() {
         return floodedPoints.isEmpty();
+    }
+
+    public void setStart(Point start) {
+        if (!grid.isAccessible(start))
+            throw new IllegalArgumentException(start + " is not accessible!");
+        this.start = start;
     }
 
     protected abstract boolean isDone();

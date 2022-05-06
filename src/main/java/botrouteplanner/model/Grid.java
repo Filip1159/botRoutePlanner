@@ -14,6 +14,7 @@ public class Grid {
     public CellType[][] array;
     @Getter
     private final int width, height, depth;
+    @Getter
     private final ArrayList<Product> products;
 
     public Grid(int width, int height, int depth) {
@@ -101,6 +102,15 @@ public class Grid {
     }
 
     public boolean isAccessible(Point p) {
+        if (!isInsideBounds(p)) return false;
         return array[p.y][p.x] != CellType.O;
+    }
+
+    public boolean isInsideBounds(Point p) {
+        return isInsideBounds(p.x, p.y);
+    }
+
+    private boolean isInsideBounds(int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 }
