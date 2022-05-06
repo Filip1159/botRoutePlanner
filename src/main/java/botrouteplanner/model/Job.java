@@ -21,10 +21,16 @@ public class Job {
     public static Job loadFromFile(String filepath) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));
         Integer[] items = splitLine(reader.readLine());
+        if (items.length != 2)
+            throw new IllegalArgumentException("Error: expected 2 header coordinates, but got " + items.length);
         Point start = new Point(items[0], items[1]);
         items = splitLine(reader.readLine());
+        if (items.length != 2)
+            throw new IllegalArgumentException("Error: expected 2 header coordinates, but got " + items.length);
         Point station = new Point(items[0], items[1]);
         String productName = reader.readLine();
+        if (productName == null)
+            throw new IllegalArgumentException("Error: missing productName");
         reader.close();
         return new Job(start, station, productName);
     }
