@@ -71,4 +71,9 @@ public class Path implements Iterable<Point> {
         for (Point step : steps)
             System.out.println(step.x + " " + step.y);
     }
+
+    public void printDebug() {
+        for (Point step : steps)
+            System.out.println("new Point(" + step.x + ", " + step.y + "),");
+    }
 }
