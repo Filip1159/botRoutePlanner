@@ -4,50 +4,23 @@ import botrouteplanner.enumeration.CellType;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 @ToString
 public class Grid {
     public CellType[][] array;
     @Getter
-    private final int width, height, depth;
+    private int width, height, depth;
     @Getter
     private final ArrayList<Product> products;
 
     public Grid(int width, int height, int depth) {
-        this.width = width;
-        this.height = height;
-        this.depth = depth;
+        setWidth(width);
+        setHeight(height);
+        setDepth(depth);
         array = new CellType[height][width];
         products = new ArrayList<>();
-    }
-
-    public static Grid loadFromFile(String filepath) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));
-        Integer[] items = splitLine(reader.readLine());
-        int width = items[0];
-        int height = items[1];
-        int depth = items[2];
-        Grid grid = new Grid(width, height, depth);
-        for (int i=0; i<height; i++) {
-            String line = reader.readLine();
-            for (int j=0; j<width; j++)
-                grid.setCell(new Point(j, i), line.charAt(j));
-        }
-        String line;
-        while ((line = reader.readLine()) != null)
-            grid.addProduct(Product.loadFromString(line));
-        return grid;
-    }
-
-    private static Integer[] splitLine(String line) {
-        String[] items = line.split(" ");
-        return Arrays.stream(items)
-                .map(Integer::parseInt)
-                .toArray(Integer[]::new);
     }
 
     public void setCell(Point cell, char cellCode) {
@@ -112,5 +85,20 @@ public class Grid {
 
     private boolean isInsideBounds(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    private void setWidth(int width) {
+        if (width <= 0) throw new IllegalArgumentException("Grid width must be positive, provided: " + width);
+        this.width = width;
+    }
+
+    private void setHeight(int height) {
+        if (height <= 0) throw new IllegalArgumentException("Grid height must be positive, provided: " + height);
+        this.height = height;
+    }
+
+    private void setDepth(int depth) {
+        if (depth <= 0) throw new IllegalArgumentException("Grid depth must be positive, provided: " + depth);
+        this.depth = depth;
     }
 }

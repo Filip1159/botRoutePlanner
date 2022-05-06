@@ -6,6 +6,7 @@ import botrouteplanner.model.Grid;
 import botrouteplanner.model.Job;
 import botrouteplanner.model.Path;
 import botrouteplanner.model.Point;
+import botrouteplanner.model.loaders.GridLoader;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
@@ -15,8 +16,8 @@ public class Planner {
     private Grid grid;
     private Job job;
 
-    public static Planner load(String gridFilePath, String jobFilePath) throws IOException {
-        Grid grid = Grid.loadFromFile(gridFilePath);
+    public static Planner load(String gridFilePath, String jobFilePath) throws IOException, IllegalArgumentException {
+        Grid grid = GridLoader.loadFromFile(gridFilePath);
         Job job = Job.loadFromFile(jobFilePath);
         return new Planner(grid, job);
     }

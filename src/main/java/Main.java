@@ -16,7 +16,7 @@ public class Main {
                 System.out.println(path.getTransitionsCount());
                 System.out.println(path.getTravelTime());
                 path.printFormatted();
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }

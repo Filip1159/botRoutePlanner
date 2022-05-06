@@ -4,6 +4,7 @@ import botrouteplanner.model.Grid;
 import botrouteplanner.model.Job;
 import botrouteplanner.model.Path;
 import botrouteplanner.model.Point;
+import botrouteplanner.model.loaders.GridLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +23,8 @@ class PointFloodFillTest {
         final String SMALL_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/job-1.txt";
         final String BIG_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/grid-2.txt";
         final String BIG_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/main/resources/job-2.txt";
-        smallGrid = Grid.loadFromFile(SMALL_GRID_PATH);
-        bigGrid = Grid.loadFromFile(BIG_GRID_PATH);
+        smallGrid = GridLoader.loadFromFile(SMALL_GRID_PATH);
+        bigGrid = GridLoader.loadFromFile(BIG_GRID_PATH);
         smallJob = Job.loadFromFile(SMALL_JOB_PATH);
         bigJob = Job.loadFromFile(BIG_JOB_PATH);
     }

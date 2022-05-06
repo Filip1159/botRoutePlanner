@@ -4,8 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.io.*;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import static botrouteplanner.model.loaders.ReaderUtils.splitLine;
 
 @Getter
 @AllArgsConstructor
@@ -22,12 +26,5 @@ public class Job {
         Point station = new Point(items[0], items[1]);
         String productName = reader.readLine();
         return new Job(start, station, productName);
-    }
-
-    private static Integer[] splitLine(String line) {
-        String[] items = line.split(" ");
-        return Arrays.stream(items)
-                .map(Integer::parseInt)
-                .toArray(Integer[]::new);
     }
 }
