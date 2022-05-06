@@ -14,8 +14,8 @@ public class Job {
     private Point start, station;
     private String productName;
 
-    public static Job loadFromFile(File file) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    public static Job loadFromFile(String filepath) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));
         Integer[] items = splitLine(reader.readLine());
         Point start = new Point(items[0], items[1]);
         items = splitLine(reader.readLine());

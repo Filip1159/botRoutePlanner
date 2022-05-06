@@ -44,7 +44,7 @@ public class Path implements Iterable<Point> {
     }
 
     public int stepsCount() {
-        return transitionsCount+1;
+        return steps.size();
     }
 
     public Point getStart() {
@@ -54,5 +54,21 @@ public class Path implements Iterable<Point> {
     @Override
     public Iterator<Point> iterator() {
         return steps.iterator();
+    }
+
+    public void append(Path other) {
+        if (!destination.equals(other.getStart()))
+            throw new IllegalArgumentException("Paths are not connected!");
+        Iterator<Point> otherIterator = other.iterator();
+        otherIterator.next();
+        while (otherIterator.hasNext())
+            steps.add(otherIterator.next());
+        transitionsCount += other.transitionsCount;
+        travelTime += other.travelTime;
+    }
+
+    public void printFormatted() {
+        for (Point step : steps)
+            System.out.println(step.x + " " + step.y);
     }
 }

@@ -24,8 +24,8 @@ public class Grid {
         products = new ArrayList<>();
     }
 
-    public static Grid loadFromFile(File file) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    public static Grid loadFromFile(String filepath) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath)));
         Integer[] items = splitLine(reader.readLine());
         int width = items[0];
         int height = items[1];
@@ -49,32 +49,31 @@ public class Grid {
                 .toArray(Integer[]::new);
     }
 
-    private void setCell(Point cell, char cellCode) {
+    public void setCell(Point cell, char cellCode) {
         array[cell.y][cell.x] = charToCellType(cellCode);
     }
 
-    private void addProduct(Product p) {
+    public void addProduct(Product p) {
         products.add(p);
     }
 
     private static CellType charToCellType(char c) {
-        switch (c) {
-            case 'H': return CellType.H;
-            case 'B': return CellType.B;
-            case 'S': return CellType.S;
-            case 'O': return CellType.O;
-            default: throw new IllegalArgumentException("Illegal cellType code: " + c);
-        }
+        return switch (c) {
+            case 'H' -> CellType.H;
+            case 'B' -> CellType.B;
+            case 'S' -> CellType.S;
+            case 'O' -> CellType.O;
+            default -> throw new IllegalArgumentException("Illegal cellType code: " + c);
+        };
     }
 
     public float getRouteWeight(CellType c) {
-        switch (c) {
-            case H: return 0.5f;
-            case B: return 1;
-            case S: return 2;
-            default:
-                throw new IllegalArgumentException("Illegal cell code: " + c);
-        }
+        return switch (c) {
+            case H -> 0.5f;
+            case B -> 1;
+            case S -> 2;
+            default -> throw new IllegalArgumentException("Illegal cell code: " + c);
+        };
     }
 
     public CellType getCellType(Point p) {
