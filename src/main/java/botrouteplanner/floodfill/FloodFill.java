@@ -12,13 +12,13 @@ public abstract class FloodFill {
     protected Grid grid;
     @Setter
     protected Point start;
-    private final float[][] costs;
+    private final float[][] travelTimes;
     private float timer = 0;
     protected final HashSet<Point> floodedPoints, newFloodedPoints, pointsToRemove;
 
     public FloodFill(Grid grid) {
         this.grid = grid;
-        costs = new float[grid.getHeight()][grid.getWidth()];
+        travelTimes = new float[grid.getHeight()][grid.getWidth()];
         floodedPoints = new HashSet<>();
         newFloodedPoints = new HashSet<>();
         pointsToRemove = new HashSet<>();
@@ -56,7 +56,7 @@ public abstract class FloodFill {
         for (Point neighbor : neighbors) {
             if (isInsideBounds(neighbor) && grid.isAccessible(neighbor)) {
                 float transitionCost = grid.getTransitionCost(floodedPoint, neighbor);
-                if (costs[neighbor.y][neighbor.x] + transitionCost == costs[floodedPoint.y][floodedPoint.x])
+                if (getTravelTime(neighbor) + transitionCost == getTravelTime(floodedPoint))
                     return neighbor;
             }
         }
@@ -66,9 +66,9 @@ public abstract class FloodFill {
     private void reset() {
         for (int i=0; i<grid.getHeight(); i++)
             for (int j=0; j<grid.getWidth(); j++)
-                costs[i][j] = -1;
+                travelTimes[i][j] = -1;
         floodedPoints.clear();
-        costs[start.y][start.x] = 0;
+        travelTimes[start.y][start.x] = 0;
         floodedPoints.add(start);
         timer = 0;
     }
@@ -91,16 +91,20 @@ public abstract class FloodFill {
     }
 
     private boolean shouldBeFlooded(Point flooder, Point candidate) {
-        return costs[flooder.y][flooder.x] + grid.getTransitionCost(flooder, candidate) == timer;
+        return getTravelTime(flooder) + grid.getTransitionCost(flooder, candidate) == timer;
     }
 
     protected void floodCell(Point floodedPoint) {
-        costs[floodedPoint.y][floodedPoint.x] = timer;
+        travelTimes[floodedPoint.y][floodedPoint.x] = timer;
         newFloodedPoints.add(floodedPoint);
     }
 
     private boolean isFloodable(Point p) {
-        return grid.isAccessible(p) && costs[p.y][p.x] == -1;
+        return grid.isAccessible(p) && getTravelTime(p) == -1;
+    }
+
+    private float getTravelTime(Point p) {
+        return travelTimes[p.y][p.x];
     }
 
     private boolean isInsideBounds(Point p) {
