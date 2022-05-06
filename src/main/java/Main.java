@@ -20,22 +20,22 @@ public class Main {
         productFloodFill.setProductName(job.getProductName());
         productFloodFill.setStart(job.getStart());
         Path path1 = productFloodFill.preparePath();
-        Point productPoint = path1.getTarget();
+        Point productPoint = path1.getDestination();
 
         PointFloodFill pointFloodFill = new PointFloodFill(grid);
         pointFloodFill.setStart(productPoint);
         pointFloodFill.setTarget(job.getStation());
         Path path2 = pointFloodFill.preparePath();
 
-        System.out.println(path1.transitionsCount() + path2.transitionsCount());
-        System.out.println(path1.getTravelTime() + path2.getTravelTime());
-        for (int i=0; i<path1.stepsCount(); i++) {
-            Point step = path1.getStep(i);
-            System.out.println(step.x + " " + step.y);
-        }
-        for (int i=0; i<path2.stepsCount(); i++) {
-            Point step = path2.getStep(i);
-            System.out.println(step.x + " " + step.y);
-        }
+        int totalTransitionsCount = path1.getTransitionsCount() + path2.getTransitionsCount();
+        float totalTravelTime = path1.getTravelTime() + path2.getTravelTime();
+        System.out.println(totalTransitionsCount);
+        System.out.println(totalTravelTime);
+
+        for (Point p : path1)
+            System.out.println(p.x + " " + p.y);
+
+        for (Point p : path2)
+            System.out.println(p.x + " " + p.y);
     }
 }
