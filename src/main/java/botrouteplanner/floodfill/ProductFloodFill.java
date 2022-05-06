@@ -6,6 +6,7 @@ import botrouteplanner.model.Product;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Optional;
 
 public class ProductFloodFill extends FloodFill {
     private final HashSet<ContainerPicker> pickers;
@@ -43,8 +44,9 @@ public class ProductFloodFill extends FloodFill {
     @Override
     protected void floodCell(Point floodedPoint) {
         super.floodCell(floodedPoint);
-        Product product;
-        if ((product = grid.getProductOrNull(productName, floodedPoint)) != null) {
+        Optional<Product> optionalProduct = grid.getProductIfPresent(productName, floodedPoint);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
             pickers.add(new ContainerPicker(product, grid.getCellType(product.getLocation())));
         }
     }

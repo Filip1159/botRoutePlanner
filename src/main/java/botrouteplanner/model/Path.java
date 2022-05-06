@@ -32,7 +32,7 @@ public class Path implements Iterable<Point> {
     }
 
     public void addStep(Point p) {
-        if (destination == null)
+        if (steps.isEmpty())
             destination = p;
         else
             transitionsCount++;

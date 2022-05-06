@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -78,12 +79,12 @@ public class Grid {
         return Math.max(weight1, weight2);
     }
 
-    public Product getProductOrNull(String name, Point location) {
+    public Optional<Product> getProductIfPresent(String name, Point location) {
         for (Product p : products) {
             if (p.getLocation().equals(location) && p.getName().equals(name))
-                return p;
+                return Optional.of(p);
         }
-        return null;
+        return Optional.empty();
     }
 
     private boolean areNeighbors(Point p1, Point p2) {

@@ -2,14 +2,12 @@ package botrouteplanner;
 
 import botrouteplanner.floodfill.PointFloodFill;
 import botrouteplanner.floodfill.ProductFloodFill;
-import botrouteplanner.model.Grid;
-import botrouteplanner.model.Job;
-import botrouteplanner.model.Path;
-import botrouteplanner.model.Point;
+import botrouteplanner.model.*;
 import lombok.AllArgsConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 @AllArgsConstructor
 public class Planner {
@@ -26,23 +24,27 @@ public class Planner {
         ProductFloodFill productFloodFill = new ProductFloodFill(grid);
         productFloodFill.setProductName(job.getProductName());
         productFloodFill.setStart(job.getStart());
-        Path path1 = productFloodFill.preparePath();
-        Point productPoint = path1.getDestination();
+        Path pathToProduct = productFloodFill.preparePath();
+        Point productPoint = pathToProduct.getDestination();
 
         PointFloodFill pointFloodFill = new PointFloodFill(grid);
         pointFloodFill.setStart(productPoint);
         pointFloodFill.setTarget(job.getStation());
-        Path path2 = pointFloodFill.preparePath();
+        Path pathToStation = pointFloodFill.preparePath();
 
-        int totalTransitionsCount = path1.getTransitionsCount() + path2.getTransitionsCount();
-        float totalTravelTime = path1.getTravelTime() + path2.getTravelTime();
+        int totalTransitionsCount = pathToProduct.getTransitionsCount() + pathToStation.getTransitionsCount();
+        float totalTravelTime = pathToProduct.getTravelTime() + pathToStation.getTravelTime();
         System.out.println(totalTransitionsCount);
         System.out.println(totalTravelTime);
 
-        for (Point p : path1)
+        for (Point p : pathToProduct)
             System.out.println(p.x + " " + p.y);
 
-        for (Point p : path2)
+        Iterator<Point> pathToStationIterator = pathToStation.iterator();
+        pathToStationIterator.next();
+        while (pathToStationIterator.hasNext()) {
+            Point p = pathToStationIterator.next();
             System.out.println(p.x + " " + p.y);
+        }
     }
 }
