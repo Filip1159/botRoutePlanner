@@ -46,6 +46,8 @@ public class GridLoader {
         while ((line = reader.readLine()) != null) {
             try {
                 Product product = Product.loadFromString(line);
+                if (!grid.isInsideBounds(product.getLocation()))
+                    throw new IllegalArgumentException("Error: " + product + " is out of grid bounds!");
                 if (product.getDepth() >= grid.getDepth())
                     throw new IllegalArgumentException("Error: " + product + " is under max depth = " + (grid.getDepth() - 1));
                 grid.addProduct(Product.loadFromString(line));
