@@ -4,16 +4,21 @@ import botrouteplanner.model.Path;
 import botrouteplanner.model.Point;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlannerTest {
-    final String SMALL_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-1.txt";
-    final String SMALL_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/job-1.txt";
-    final String BIG_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-2.txt";
-    final String BIG_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/job-2.txt";
+    final String SMALL_GRID_PATH = getPath("src/test/resources/grid-1.txt");
+    final String SMALL_JOB_PATH = getPath("src/test/resources/job-1.txt");
+    final String BIG_GRID_PATH = getPath("src/test/resources/grid-2.txt");
+    final String BIG_JOB_PATH = getPath("src/test/resources/job-2.txt");
+
+    private String getPath(String resource) {
+        return new File(resource).getAbsolutePath();
+    }
 
     @Test
     void exampleJob1() throws IOException {

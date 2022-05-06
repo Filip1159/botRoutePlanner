@@ -4,6 +4,7 @@ import botrouteplanner.model.loaders.GridLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -14,8 +15,12 @@ class GridTest {
 
     @BeforeEach
     void setup() throws IOException {
-        final String SMALL_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-1.txt";
+        final String SMALL_GRID_PATH = getPath("src/test/resources/grid-1.txt");
         smallGrid = GridLoader.loadFromFile(SMALL_GRID_PATH);
+    }
+
+    private String getPath(String resource) {
+        return new File(resource).getAbsolutePath();
     }
 
     @Test

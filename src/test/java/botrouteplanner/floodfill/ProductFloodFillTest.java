@@ -8,6 +8,7 @@ import botrouteplanner.model.loaders.GridLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,16 +20,20 @@ class ProductFloodFillTest {
 
     @BeforeEach
     void setup() throws IOException {
-        final String SINGLE_POINT_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/single-point-grid.txt";
-        final String SMALL_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-1.txt";
-        final String SMALL_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/job-1.txt";
-        final String BIG_GRID_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/grid-2.txt";
-        final String BIG_JOB_PATH = "C:/Users/PAVILION/IdeaProjects/BotRoutePlanner/src/test/resources/job-2.txt";
+        final String SINGLE_POINT_GRID_PATH = getPath("src/test/resources/single-point-grid.txt");
+        final String SMALL_GRID_PATH = getPath("src/test/resources/grid-1.txt");
+        final String SMALL_JOB_PATH = getPath("src/test/resources/job-1.txt");
+        final String BIG_GRID_PATH = getPath("src/test/resources/grid-2.txt");
+        final String BIG_JOB_PATH = getPath("src/test/resources/job-2.txt");
         smallGrid = GridLoader.loadFromFile(SMALL_GRID_PATH);
         bigGrid = GridLoader.loadFromFile(BIG_GRID_PATH);
         smallJob = Job.loadFromFile(SMALL_JOB_PATH);
         bigJob = Job.loadFromFile(BIG_JOB_PATH);
         singlePointGrid = GridLoader.loadFromFile(SINGLE_POINT_GRID_PATH);
+    }
+
+    private String getPath(String resource) {
+        return new File(resource).getAbsolutePath();
     }
 
     @Test
