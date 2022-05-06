@@ -1,50 +1,60 @@
 package botrouteplanner.model;
 
 import botrouteplanner.enumeration.CellType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class Grid {
     public CellType[][] array;
     @Getter
-    private int width, height, depth;
-    private ArrayList<Product> products;
+    private final int width, height, depth;
+    private final ArrayList<Product> products;
+
+    public Grid(int width, int height, int depth) {
+        this.width = width;
+        this.height = height;
+        this.depth = depth;
+        array = new CellType[height][width];
+        products = new ArrayList<>();
+    }
 
     public static Grid loadFromFile(File file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-        String header = reader.readLine();
-        String[] header_split = header.split(" ");
-        int width = Integer.parseInt(header_split[0]);
-        int height = Integer.parseInt(header_split[1]);
-        int depth = Integer.parseInt(header_split[2]);
-        CellType[][] array = new CellType[height][width];
+        Integer[] items = splitLine(reader.readLine());
+        int width = items[0];
+        int height = items[1];
+        int depth = items[2];
+        Grid grid = new Grid(width, height, depth);
         for (int i=0; i<height; i++) {
             String line = reader.readLine();
-            for (int j=0; j<width; j++) {
-                array[i][j] = charToCellType(line.charAt(j));
-            }
+            for (int j=0; j<width; j++)
+                grid.setCell(new Point(j, i), line.charAt(j));
         }
-        ArrayList<Product> products = new ArrayList<>();
         String line;
-        while ((line = reader.readLine()) != null) {
-            products.add(Product.loadFromString(line));
-        }
-        Grid result = new Grid();
-        result.width = width;
-        result.height = height;
-        result.depth = depth;
-        result.products = products;
-        result.array = array;
-        return result;
+        while ((line = reader.readLine()) != null)
+            grid.addProduct(Product.loadFromString(line));
+        return grid;
+    }
+
+    private static Integer[] splitLine(String line) {
+        String[] items = line.split(" ");
+        return Arrays.stream(items)
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
+    }
+
+    private void setCell(Point cell, char cellCode) {
+        array[cell.y][cell.x] = charToCellType(cellCode);
+    }
+
+    private void addProduct(Product p) {
+        products.add(p);
     }
 
     private static CellType charToCellType(char c) {
