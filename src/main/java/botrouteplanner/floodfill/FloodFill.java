@@ -11,7 +11,7 @@ public abstract class FloodFill {
     @Setter
     protected Grid grid;
     @Setter
-    protected Point start, target;
+    protected Point start;
     private final float[][] costs;
     private float timer = 0;
     protected final HashSet<Point> floodedPoints, newFloodedPoints, pointsToRemove;
@@ -24,8 +24,20 @@ public abstract class FloodFill {
         pointsToRemove = new HashSet<>();
     }
 
-    public void fill() {
-        setUp();
+    public Path preparePath() {
+        fill();
+        Point currentStep = getDestination();
+        Path path = new Path(currentStep, timer);
+        while (!currentStep.equals(start)) {
+            Point floodSource = getFloodSource(currentStep);
+            path.addStep(floodSource);
+            currentStep = floodSource;
+        }
+        return path;
+    }
+
+    private void fill() {
+        reset();
         while (!isDone()) {
             tick();
             if (!isFullyFilled()) {
@@ -37,20 +49,33 @@ public abstract class FloodFill {
                 newFloodedPoints.clear();
             }
         }
-        target = getTarget();
     }
 
-    protected void tick() {
-        timer += .5f;
+    private Point getFloodSource(Point floodedPoint) {
+        Point[] neighbors = floodedPoint.getNeighbors();
+        for (Point neighbor : neighbors) {
+            if (isInsideBounds(neighbor) && grid.isAccessible(neighbor)) {
+                float transitionCost = grid.getTransitionCost(floodedPoint, neighbor);
+                if (costs[neighbor.y][neighbor.x] + transitionCost == costs[floodedPoint.y][floodedPoint.x])
+                    return neighbor;
+            }
+        }
+        throw new IllegalStateException("Internal error: cannot find flood source!");
     }
 
-    protected abstract Point getTarget();
-
-    protected abstract boolean isDone();
+    private void reset() {
+        for (int i=0; i<grid.getHeight(); i++)
+            for (int j=0; j<grid.getWidth(); j++)
+                costs[i][j] = -1;
+        floodedPoints.clear();
+        costs[start.y][start.x] = 0;
+        floodedPoints.add(start);
+        timer = 0;
+    }
 
     private void tryToFloodNeighbors(Point p) {
         boolean hasFloodableNeighbors = false;
-        for (Point neighbor : getNeighbors(p)) {
+        for (Point neighbor : p.getNeighbors()) {
             if (isInsideBounds(neighbor) && isFloodable(neighbor)) {
                 hasFloodableNeighbors = true;
                 if (shouldBeFlooded(p, neighbor))
@@ -59,6 +84,10 @@ public abstract class FloodFill {
         }
         if (!hasFloodableNeighbors)
             pointsToRemove.add(p);
+    }
+
+    protected void tick() {
+        timer += .5f;
     }
 
     private boolean shouldBeFlooded(Point flooder, Point candidate) {
@@ -70,38 +99,8 @@ public abstract class FloodFill {
         newFloodedPoints.add(floodedPoint);
     }
 
-    public Path preparePath() {
-        fill();
-        Point currentStep = target;
-        Path path = new Path();
-        path.setTravelTime(timer);
-        path.addStep(currentStep);
-        while (!currentStep.equals(start)) {
-            Point[] neighbors = getNeighbors(currentStep);
-            for (Point neighbor : neighbors) {
-                if (!isOutOfBounds(neighbor) && grid.isAccessible(neighbor)) {
-                    float transitionCost = grid.getTransitionCost(currentStep, neighbor);
-                    if (costs[neighbor.y][neighbor.x] + transitionCost == costs[currentStep.y][currentStep.x]) {
-                        path.addStep(neighbor);
-                        currentStep = neighbor;
-                        break;
-                    }
-                }
-            }
-        }
-        return path;
-    }
-
     private boolean isFloodable(Point p) {
         return grid.isAccessible(p) && costs[p.y][p.x] == -1;
-    }
-
-    private boolean isOutOfBounds(int x, int y) {
-        return !isInsideBounds(x, y);
-    }
-
-    private boolean isOutOfBounds(Point p) {
-        return !isInsideBounds(p);
     }
 
     private boolean isInsideBounds(Point p) {
@@ -116,20 +115,7 @@ public abstract class FloodFill {
         return floodedPoints.isEmpty();
     }
 
-    private void setUp() {
-        for (int i=0; i<grid.getHeight(); i++)
-            for (int j=0; j<grid.getWidth(); j++)
-                costs[i][j] = -1;
-        floodedPoints.clear();
-        costs[start.y][start.x] = 0;
-        floodedPoints.add(start);
-        timer = 0;
-    }
+    protected abstract boolean isDone();
 
-    private Point[] getNeighbors(Point p) {
-        return new Point[] {new Point(p.x, p.y-1),
-                new Point(p.x+1, p.y),
-                new Point(p.x, p.y+1),
-                new Point(p.x-1, p.y)};
-    }
+    protected abstract Point getDestination();
 }

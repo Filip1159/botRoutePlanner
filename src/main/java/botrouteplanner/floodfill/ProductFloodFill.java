@@ -19,21 +19,17 @@ public class ProductFloodFill extends FloodFill {
 
     @Override
     protected boolean isDone() {
-        for (ContainerPicker p : pickers) {
-            if (p.didFinish()) {
+        for (ContainerPicker p : pickers)
+            if (p.didFinish())
                 return true;
-            }
-        }
         return false;
     }
 
     @Override
-    protected Point getTarget() {
-        for (ContainerPicker p : pickers) {
-            if (p.didFinish()) {
+    protected Point getDestination() {
+        for (ContainerPicker p : pickers)
+            if (p.didFinish())
                 return p.getLocation();
-            }
-        }
         return null;
     }
 

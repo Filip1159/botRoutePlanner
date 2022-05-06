@@ -20,7 +20,7 @@ public class PointFloodFill extends FloodFill {
     }
 
     @Override
-    protected Point getTarget() {
+    protected Point getDestination() {
         return target;
     }
 }
